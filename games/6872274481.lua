@@ -10593,37 +10593,56 @@ end)
                             end
                         end
 
-                        if CurrentGen then
-                            vape:CreateNotification("AutoWin", "Moving to Iron Gen!", 8)
-                            lplr.Character.Humanoid:MoveTo(CurrentGen.Value.Position)
-                            task.wait((T + 3.33))
-                            vape:CreateNotification("AutoWin", "Moving to Shop!", 8)
-                            lplr.Character.Humanoid:MoveTo(CurrentItemShop.Position)
-                            Speed()
-                            task.wait(1.5)
-                            vape:CreateNotification("AutoWin", "Purchasing Wool!", 8)
-                            task.wait(3)
-                            for i = 6, 0, -1 do
-                                PurchaseWool()
-                                task.wait(0.05)
-                            end
-                            if oppTeamName == "Orange" then
-                                MapLayoutBLUE()
-                            else
-                                MapLayoutORANGE()
-                            end
-                            vape:CreateNotification("AutoWin", "Moving to " .. oppTeamName .. "'s Bed!", 8)
-                            fly()
-                            climbwalls()
-                            task.spawn(function()
-                                lplr.Character.Humanoid:MoveTo(OppositeTeamBedPos)
-                            end)
-                            
-                            lplr.Character.Humanoid.MoveToFinished:Connect(function()
-								lplr.Character.Humanoid:MoveTo(OppositeTeamBedPos)
-							end)
-                        end
-	end
+The problem is with the MoveToFinished event connection at the end.
+
+Issues Found
+MoveToFinished:Connect() never disconnects - creates infinite connections
+
+Logic inside creates infinite loop - calls MoveTo → triggers MoveToFinished → calls MoveTo again
+
+Missing cleanup and end for task.spawn
+
+if CurrentGen then
+    vape:CreateNotification("AutoWin", "Moving to Iron Gen!", 8)
+    lplr.Character.Humanoid:MoveTo(CurrentGen.Value.Position)
+    task.wait((T + 3.33))
+    
+    vape:CreateNotification("AutoWin", "Moving to Shop!", 8)
+    lplr.Character.Humanoid:MoveTo(CurrentItemShop.Position)
+    Speed()
+    task.wait(1.5)
+    
+    vape:CreateNotification("AutoWin", "Purchasing Wool!", 8)
+    task.wait(3)
+    
+    for i = 6, 0, -1 do
+        PurchaseWool()
+        task.wait(0.05)
+    end
+    
+    if oppTeamName == "Orange" then
+        MapLayoutBLUE()
+    else
+        MapLayoutORANGE()
+    end
+    
+    vape:CreateNotification("AutoWin", "Moving to " .. oppTeamName .. "'s Bed!", 8)
+    fly()
+    climbwalls()
+    
+    task.spawn(function()
+        lplr.Character.Humanoid:MoveTo(OppositeTeamBedPos)
+    end)
+    
+    -- FIXED By @theyfearsavy
+    local connection
+    connection = lplr.Character.Humanoid.MoveToFinished:Once(function(reached)
+        if reached and lplr.Character and lplr.Character:FindFirstChild("Humanoid") then
+            lplr.Character.Humanoid:MoveTo(OppositeTeamBedPos)
+        end
+        connection:Disconnect() 
+    end)
+end
 
 	local function Skywars()
         local T = 10
