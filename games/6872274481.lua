@@ -2101,7 +2101,7 @@ run(function()
     end
 
 	HitBoxes = vape.Categories.Blatant:CreateModule({
-    Name = "Hit Boxes",
+    Name = "HitBoxes",
     Function = function(callback)
         if callback then
             if Mode.Value == "Sword" then
