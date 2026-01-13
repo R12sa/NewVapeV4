@@ -11457,7 +11457,7 @@ end)
 run(function()
     local BuyBlocksModule
     local GUICheck
-    local DelaySlider
+    local Speed
     local running = false
 
     local function getShopNPC()
@@ -11521,7 +11521,9 @@ run(function()
                             end)
                         end
 
-                        task.wait(DelaySlider.Value)
+						local spd = Speed.Value
+						spd = spd <= 0 and 1 or spd
+						task.wait(1 / spd)
                     end
                 end)
             end
@@ -11535,13 +11537,12 @@ run(function()
         Default = false
     })
 
-    DelaySlider = BuyBlocksModule:CreateSlider({
-        Name = "Delay",
-        Min = 0.1,
-        Max = 2,
-        Default = 0.1,
-        Decimal = 10,
-        Tooltip = "Delay between purchases (seconds)"
+    Speed = BuyBlocksModule:CreateSlider({
+        Name = "Speed",
+        Min = 1,
+        Max = 20,
+        Default = 10,
+        Tooltip = "Buys per second (higher = faster)"
     })
 end)
 
