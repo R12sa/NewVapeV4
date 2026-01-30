@@ -5366,9 +5366,13 @@ function mainapi:Load(skipgui, profile)
 	end
 	local guidata = {}
 	local savecheck = true
+	local guiFile = 'newvape/profiles/'..tostring(self.Place)..'.gui.txt'
+	local legacyGuiFile = 'newvape/profiles/'..tostring(game.GameId)..'.gui.txt'
 
-	if isfile('newvape/profiles/'..game.GameId..'.gui.txt') then
-		guidata = loadJson('newvape/profiles/'..game.GameId..'.gui.txt')
+	if isfile(guiFile) then
+		guidata = loadJson(guiFile)
+	elseif isfile(legacyGuiFile) then
+		guidata = loadJson(legacyGuiFile)
 		if not guidata then
 			guidata = {Categories = {}}
 			self:CreateNotification('Vape', 'Failed to load GUI settings.', 10, 'alert')
@@ -5554,6 +5558,9 @@ end
 
 function mainapi:Save(newprofile)
 	if not self.Loaded then return end
+	if not isfolder('newvape/profiles') then
+		makefolder('newvape/profiles')
+	end
 	local guidata = {
 		Categories = {},
 		Profile = newprofile or self.Profile,
@@ -5594,7 +5601,7 @@ function mainapi:Save(newprofile)
 		}
 	end
 
-	writefile('newvape/profiles/'..game.GameId..'.gui.txt', httpService:JSONEncode(guidata))
+	writefile('newvape/profiles/'..tostring(self.Place)..'.gui.txt', httpService:JSONEncode(guidata))
 	writefile('newvape/profiles/'..self.Profile..self.Place..'.txt', httpService:JSONEncode(savedata))
 end
 
