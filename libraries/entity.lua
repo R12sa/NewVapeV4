@@ -161,7 +161,7 @@ end
 
 entitylib.EntityPosition = function(entitysettings)
 	if entitylib.isAlive then
-		local localPosition, sortingTable = entitysettings.Origin or entitylib.character.HumanoidRootPart.Position, {}
+		local localPosition, sortingTable = entitysettings.Origin or ((entitylib.character.RootPart or entitylib.character.HumanoidRootPart) and (entitylib.character.RootPart or entitylib.character.HumanoidRootPart).Position) or Vector3.zero, {}
 		for _, v in entitylib.List do
 			if not entitysettings.Players and v.Player then continue end
 			if not entitysettings.NPCs and v.NPC then continue end
@@ -196,7 +196,7 @@ end
 entitylib.AllPosition = function(entitysettings)
 	local returned = {}
 	if entitylib.isAlive then
-		local localPosition, sortingTable = entitysettings.Origin or entitylib.character.HumanoidRootPart.Position, {}
+		local localPosition, sortingTable = entitysettings.Origin or ((entitylib.character.RootPart or entitylib.character.HumanoidRootPart) and (entitylib.character.RootPart or entitylib.character.HumanoidRootPart).Position) or Vector3.zero, {}
 		for _, v in entitylib.List do
 			if not entitysettings.Players and v.Player then continue end
 			if not entitysettings.NPCs and v.NPC then continue end
