@@ -6664,7 +6664,7 @@ targetinfo = {
 			end
 		end
 
-		targetinfobkg.Visible = v ~= nil or mainapi.gui.ScaledGui.ClickGui.Visible
+		targetinfobkg.Visible = v ~= nil or (clickgui and clickgui.Visible) or false
 		if v then
 			targetinfoname.Text = v.Player and (targetinfodisplay.Enabled and v.Player.DisplayName or v.Player.Name) or v.Character and v.Character.Name or targetinfoname.Text
 			targetinfoshot.Image = 'rbxthumb://type=AvatarHeadShot&id='..(v.Player and v.Player.UserId or 1)..'&w=420&h=420'
